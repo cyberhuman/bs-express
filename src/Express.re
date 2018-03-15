@@ -1,3 +1,5 @@
+[%%raw "import Express from 'express'"];
+
 type complete;
 
 module Error = {
@@ -437,8 +439,8 @@ module Middleware = {
     "type": string,
     "limit": Js.Nullable.t(int),
   };
-  [@bs.module "express"] [@bs.val] external json_ : jsonOptions => t = "json";
-  [@bs.module "express"] [@bs.val]
+  [@bs.scope "Express"] [@bs.val] external json_ : jsonOptions => t = "json";
+  [@bs.scope "Express"] [@bs.val]
   external urlencoded_ : urlEncodedOptions => t = "urlencoded";
   let json = (~inflate=true, ~strict=true, ~limit=?, ()) =>
     json_({
@@ -642,7 +644,7 @@ module Router = {
     "mergeParams": bool,
     "strict": bool,
   };
-  [@bs.module "express"] [@bs.val] external make_ : routerArgs => t = "Router";
+  [@bs.scope "Express"] [@bs.val] external make_ : routerArgs => t = "Router";
   let make = (~caseSensitive=false, ~mergeParams=false, ~strict=false, ()) =>
     make_({
       "caseSensitive": caseSensitive,
@@ -668,7 +670,8 @@ module App = {
   let useRouter = (app, router) => Router.asMiddleware(router) |> use(app);
   let useRouterOnPath = (app, ~path, router) =>
     Router.asMiddleware(router) |> useOnPath(app, ~path);
-  [@bs.module] external make : unit => t = "express";
+  [@bs.val] external make : unit => t = "Express";
+  let make = make;
 
   /*** [make ()] creates an instance of the App class. */
   external asMiddleware : t => Middleware.t = "%identity";
@@ -696,7 +699,7 @@ module Static = {
   [@bs.set] external etag : (options, bool) => unit = "";
   /* ... add all the other options */
   type t;
-  [@bs.module "express"] external make : (string, options) => t = "static";
+  [@bs.scope "Express"] [@bs.val] external make : (string, options) => t = "static";
 
   /*** [make directory] creates a static middleware for [directory] */
   external asMiddleware : t => Middleware.t = "%identity";
